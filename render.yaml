@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: goldilocks-arb
+    runtime: python
+    region: frankfurt          # Bybit/MEXC geo-block US IPs - use frankfurt or singapore
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --loop uvloop --http httptools --no-access-log
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        sync: false            # paste the Supabase *Session pooler* URI in the dashboard
+      - key: MIN_PROFIT_PCT
+        value: "0.10"
+      - key: MIN_LIQUIDITY_USD
+        value: "300"
+      - key: TOP_N
+        value: "20"
+      - key: RADAR_INTERVAL_S
+        value: "30"
